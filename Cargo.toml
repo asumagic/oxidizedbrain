@@ -1,0 +1,12 @@
+[package]
+name = "rustedbrain"
+version = "0.1.0"
+authors = ["Asu <sdelang@sdelang.fr>"]
+edition = "2018"
+
+[dependencies]
+structopt = "0.3"
+
+cranelift = "0.63.0"
+cranelift-module = "0.63.0"
+cranelift-simplejit = "0.63.0"
