@@ -1,5 +1,5 @@
 [package]
-name = "rustedbrain"
+name = "oxidizedbrain"
 version = "0.1.0"
 authors = ["Asu <sdelang@sdelang.fr>"]
 edition = "2018"

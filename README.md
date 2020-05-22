@@ -1,4 +1,4 @@
-# Rustedbrain
+# Oxydizedbrain
 
 Silly Rust learning project, somewhat inspired by my [ashBF project](https://github.com/AsuMagic/AshBF).
 
