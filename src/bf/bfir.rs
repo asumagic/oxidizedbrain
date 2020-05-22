@@ -33,7 +33,7 @@ impl Builder {
         }
     }
 
-    fn emit_shift(&mut self, value: i8) {
+    fn emit_shift(&mut self, value: i32) {
         if let Some(Op::Concrete(vm::Op::Shift { shift_amount })) = self.program.last_mut() {
             *shift_amount += value;
         } else {
@@ -43,7 +43,7 @@ impl Builder {
         }
     }
 
-    fn optimize(&mut self) -> Result<(), Error> {
+    fn peephole_optimize(&mut self) -> Result<(), Error> {
         let mut program_pointer = 0usize;
 
         let mut optimized = Vec::<Op>::with_capacity(self.program.capacity());
@@ -67,10 +67,7 @@ impl Builder {
                 ) => {
                     emit(&[Op::Concrete(vm::Op::Set { constant: a + b })], 2);
                 }
-                Some([op, ..]) => {
-                    let clone = op.clone();
-                    emit(&[clone], 1)
-                }
+                Some([op, ..]) => emit(&[op.clone()], 1),
                 _ => {
                     break;
                 }
@@ -79,6 +76,12 @@ impl Builder {
 
         optimized.shrink_to_fit();
         self.program = optimized;
+
+        Ok(())
+    }
+
+    fn optimize(&mut self) -> Result<(), Error> {
+        self.peephole_optimize()?;
 
         Ok(())
     }

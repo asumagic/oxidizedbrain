@@ -4,7 +4,7 @@ use std::num::Wrapping;
 pub enum Op {
     Add { constant: i8 },
     Set { constant: i8 },
-    Shift { shift_amount: i8 },
+    Shift { shift_amount: i32 },
     Write,
     Read,
     JumpIfZero { offset: usize },
@@ -14,7 +14,7 @@ pub enum Op {
 
 #[derive(Debug)]
 pub enum VmError {
-    TapeOutOfBounds,
+    TapeOutOfBounds{index: usize},
 }
 
 pub struct Vm<'a> {
@@ -25,11 +25,11 @@ pub struct Vm<'a> {
 // Safe variant
 impl Vm<'_> {
     fn tape_get(&self, index: usize) -> Result<&Wrapping<u8>, VmError> {
-        self.tape.get(index).ok_or(VmError::TapeOutOfBounds)
+        self.tape.get(index).ok_or(VmError::TapeOutOfBounds{index})
     }
 
     fn tape_get_mut(&mut self, index: usize) -> Result<&mut Wrapping<u8>, VmError> {
-        self.tape.get_mut(index).ok_or(VmError::TapeOutOfBounds)
+        self.tape.get_mut(index).ok_or(VmError::TapeOutOfBounds{index})
     }
 
     pub fn run(&mut self) -> Result<(), VmError> {
@@ -103,7 +103,6 @@ impl Vm<'_> {
                     *self.tape_get_unchecked_mut(tape_pointer) = Wrapping(*constant as u8);
                 }
                 Op::Shift { shift_amount } => {
-                    // FIXME: the whole conversion stuff should not have to be necessary
                     tape_pointer = (tape_pointer as i64 + *shift_amount as i64) as usize;
                 }
                 Op::Write => {
