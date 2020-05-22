@@ -57,14 +57,23 @@ impl Builder {
             };
 
             match op {
-                Some([Op::LoopBegin, Op::Concrete(vm::Op::Add { constant: _ }), Op::LoopEnd, ..]) => {
-                    emit(&[Op::Concrete(vm::Op::Set{ constant: 0 })], 3);
-                },
-                Some([Op::Concrete(vm::Op::Set{constant: a}), Op::Concrete(vm::Op::Add{constant: b})]) => {
-                    emit(&[Op::Concrete(vm::Op::Set{ constant: a + b })], 2);
+                Some(
+                    [Op::LoopBegin, Op::Concrete(vm::Op::Add { constant: _ }), Op::LoopEnd, ..],
+                ) => {
+                    emit(&[Op::Concrete(vm::Op::Set { constant: 0 })], 3);
                 }
-                Some([op, ..]) => { let clone = op.clone(); emit(&[clone], 1) },
-                _ => { break; }
+                Some(
+                    [Op::Concrete(vm::Op::Set { constant: a }), Op::Concrete(vm::Op::Add { constant: b }), ..],
+                ) => {
+                    emit(&[Op::Concrete(vm::Op::Set { constant: a + b })], 2);
+                }
+                Some([op, ..]) => {
+                    let clone = op.clone();
+                    emit(&[clone], 1)
+                }
+                _ => {
+                    break;
+                }
             }
         }
 
